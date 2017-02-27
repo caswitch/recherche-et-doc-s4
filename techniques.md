@@ -42,3 +42,10 @@ Ces options sont par défaut dans -03 ou utilisées si -ftree-vectorize.
 Simplification d'expressions par leur substitution avec une expression plus efficace.
 <http://www.compileroptimizations.com/category/expression_simplification.htm>
 
+## Induction Variable Elimination
+## Élimination d'itérateur
+
+Combinaison d’itérateurs dans une boucle.
+<http://www.compileroptimizations.com/category/ive.htm>
+
+
