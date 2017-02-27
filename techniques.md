@@ -22,8 +22,23 @@ Pour de la simplification et réduction, on répète les opérations sur les con
 
 ##Vectorization (simd)
 
+Exécution de plusieurs opérations en une seule étape : dans une boucle, le compilateur exécute n opérations selon la taille n du vecteur, puis stocke plusieurs instrucions scalaires dans un seul vecteur d'instruction.
+Les performances peuvent être améliorées d'un facteur n (taille du vecteur).
++ Exemples
+<!-- PAS COMPRIS : By executing multiple operations in a single step, performance can potentially improve by a factor of up to the vector length (4 in this example), over scalar mode where one pair of operands are being operated on sequentially. -->
+
+Compilers can auto-vectorize loops for you that are considered safe for vectorization. In case of the Intel compiler, this happens when you compile at default optimization level (-O2) or higher. On the other hand, if you want to disable vectorization for any loop in a source file for any reason, you can do that by specifying the '-no-vec' compile flag.
+<http://www.nersc.gov/users/computational-systems/edison/programming/vectorization/>
 <http://moss.csc.ncsu.edu/~mueller/cluster/ps3/SDK3.0/docs/accessibility/sdkpt/cbet_1simdvector.html>
 
+-ftree-loop-vectorize : Vectorisation d'arbres.
+-ftree-slp-vectorize : Vectorisation basique d’arbres en bloques
+
+Ces options sont par défaut dans -03 ou utilisées si -ftree-vectorize.
+<https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html>
 
 ## Simplification et réduction
+
+Simplification d'expressions par leur substitution avec une expression plus efficace.
+<http://www.compileroptimizations.com/category/expression_simplification.htm>
 
