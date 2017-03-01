@@ -1,43 +1,188 @@
-##Compilation/compilateur
+## Compilation/compilateur
 
-##Techniques d'optimisation
+## Techniques d'optimisation
 
-###Constant propagation
-Substitution de variable par leur constante assignée. <http://www.compileroptimizations.com/category/constant_propagation.htm>
+### Constant propagation
 
-###Constant folding
-Substitution d’expression constante par sa valeur calculée pendant la compilation et non pendant l’exécution. <http://www.compileroptimizations.com/category/constant_folding.htm>
-Expressions with constant operands can be evaluated at compile time, thus improving run-time performance and reducing code size by avoiding evaluation at compile-time. <http://www.compileroptimizations.com/category/constant_folding.htm>
-Exemples <https://en.wikipedia.org/wiki/Constant_folding#The_optimizations_in_action>
+Substitution de variable par leur constante assignée.
 
-##Dead code elimination
+```c
+void constant_propagation (void) {
+	x = 2;
+	y = x + 8;
+}
+```
+devient
+```c
+void constant_propagation (void) {
+	x = 2;
+	y = 10;
+}
+```
+
+<http://www.compileroptimizations.com/category/constant_propagation.htm>
+
+### Constant folding
+
+Substitution d’expression constante par sa valeur calculée pendant la compilation et non pendant l’exécution.
+
+<http://www.compileroptimizations.com/category/constant_folding.htm>
+
+```c
+int constant_folding (void) {
+	return 2 + 6;
+}
+```
+devient
+```c
+int constant_folding (void) {
+	return 8;
+}
+```
+
+## Dead code elimination
+
 Élimination du code qui n’affecte pas la finalité du programme. 
 - code qui n'est pas utilisé
 - code qui n'est pas atteint (ex. : après un return)
+
 <http://www.compileroptimizations.com/category/dead_code_elimination.htm>
 
-##Constant propagation -> Constant folding -> Dead code eliminiation
+```c
+int x;
+int dead_code_elimination (void) {
+	int y;
+	y = 24;
+	x = 2;
+	x = 8;
+	return x;
+	x = 4;
+}
+```
+devient
+```c
+int x;
+int dead_code_elimination (void) {
+	x = 8;
+	return x;
+}
+```
 
-Pour de la simplification et réduction, on répète les opérations sur les constantes jusqu'il n'y ait plus modificatin du code. <https://en.wikipedia.org/wiki/Constant_folding#The_optimizations_in_action>
+## Constant propagation -> Constant folding -> Dead code eliminiation
 
-##Vectorization (simd)
+Pour de la simplification et réduction, on répète les opérations sur les constantes jusqu'il n'y ait plus modificatin du code.
 
-Exécution de plusieurs opérations en une seule étape : dans une boucle, le compilateur exécute n opérations selon la taille n du vecteur, puis stocke plusieurs instrucions scalaires dans un seul vecteur d'instruction.
-Les performances peuvent être améliorées d'un facteur n (taille du vecteur).
-+ Exemples
-<!-- PAS COMPRIS : By executing multiple operations in a single step, performance can potentially improve by a factor of up to the vector length (4 in this example), over scalar mode where one pair of operands are being operated on sequentially. -->
+<https://en.wikipedia.org/wiki/Constant_folding#The_optimizations_in_action>
 
-Compilers can auto-vectorize loops for you that are considered safe for vectorization. In case of the Intel compiler, this happens when you compile at default optimization level (-O2) or higher. On the other hand, if you want to disable vectorization for any loop in a source file for any reason, you can do that by specifying the '-no-vec' compile flag.
+```c
+int techniques_combination (void) {
+	int a = 30;
+	int b = 9 - (a / 5);
+	int c;
+	c = b * 4;
+	if (c > 140)
+		c = c - 10;
+	return c * (60 / a);
+}
+```
+devient après l'application de constant propagation puis de constant folding :
+```c
+int techniques_combination (void) {
+  int a = 30;
+  int b = 3;
+  int c;
+
+  c = b * 4;
+  if (c > 10) {
+     c = c - 10;
+  }
+  return c * 2;
+}
+```
+devient après une deuxième application de constant propagation puis de constant folding :
+```c
+int techniques_combination (void) {
+  int a = 30;
+  int b = 3;
+  int c;
+
+  c = 12;
+  if (true) {
+     c = 2;
+  }
+  return c * 2;
+}
+```
+Les variables a et b ont été simplifiée en constantes et leurs valeurs ont été substituées à chacune de leur occurrence.
+Le code devient après application du dead code elimination :
+```c
+int techniques_combination (void) {
+  int c;
+
+  if (true) {
+     c = 2;
+  }
+  return c * 2;
+}
+```
+Le booléen True peut être substitué par l'entier 1.
+Utilisation de **sparse conditional constant propagation** <https://en.wikipedia.org/wiki/Sparse_conditional_constant_propagation>.
+Le code devient :
+```c
+int techniques_combination (void) {
+  return 4;
+}
+```
+Exemple tiré de <https://en.wikipedia.org/wiki/Constant_folding#The_optimizations_in_action>
+
+## Vectorization (SIMD)
+
+Exécution de plusieurs opérations d'une boucle en une seule étape
+-> exécution de n opérations selon la taille n du vecteur dans une boucle
+-> stockage de plusieurs instrucions scalaires dans un seul vecteur d'instruction
+*Instruction/implémentation/programme scalaire : Traitement de données séquentielles*
+
+Amélioration des performances jusqu'à un facteur n (taille du vecteur) au-dessus du mode scalaire où une paire d'opérandes est exploitée séquentiellement.
+
 <http://www.nersc.gov/users/computational-systems/edison/programming/vectorization/>
 <http://moss.csc.ncsu.edu/~mueller/cluster/ps3/SDK3.0/docs/accessibility/sdkpt/cbet_1simdvector.html>
 
--ftree-loop-vectorize : Vectorisation d'arbres.
+-ftree-loop-vectorize : Vectorisation d'arbres
 -ftree-slp-vectorize : Vectorisation basique d’arbres en bloques
 
 Ces options sont par défaut dans -03 ou utilisées si -ftree-vectorize.
 <https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html>
 
-## Simplification et réduction
+**Processeur vectoriel :** Processeur dont les fonctionnalités architecturales améliorent l'exécution de programme utilisant le parallélisme des tableaux et des matrices.
+<https://fr.wikipedia.org/wiki/Processeur_vectoriel>
+
+```
+do i = 1, 100
+   a(i) = b(i) + c(i)
+end do
+```
+devient
+```
+do i = 1, 100, 4
+   a(i)   = b(i)   + c(i)
+   a(i+1) = b(i+1) + c(i+1)
+   a(i+2) = b(i+2) + c(i+2)
+   a(i+3) = b(i+3) + c(i+3)
+end do
+```
+devient
+```
+do i = 1, 100, 4
+   <load b(i), b(i+1), b(i+2), b(i+3) into a vector register, vB>
+   <load c(i), c(i+1), c(i+2), c(i+3) into a vector register, vC>
+   vA = vB + vC
+   <store a(i), a(i+1), a(i+2), a(i+3) from the vector register, vA>
+end do
+```
+Ici, 4 instruction (additions) sont exécutées en une seule étape.
+Exemple tiré de <http://www.nersc.gov/users/computational-systems/edison/programming/vectorization/>
+
+## Expression Simplification
 
 Simplification d'expressions par leur substitution avec une expression plus efficace.
 <http://www.compileroptimizations.com/category/expression_simplification.htm>
@@ -47,5 +192,7 @@ Simplification d'expressions par leur substitution avec une expression plus effi
 
 Combinaison d’itérateurs dans une boucle.
 <http://www.compileroptimizations.com/category/ive.htm>
+
+
 
 
