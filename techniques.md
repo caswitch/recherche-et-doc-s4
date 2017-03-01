@@ -187,10 +187,61 @@ Exemple tiré de <http://www.nersc.gov/users/computational-systems/edison/progra
 Simplification d'expressions par leur substitution avec une expression plus efficace.
 <http://www.compileroptimizations.com/category/expression_simplification.htm>
 
-## Induction Variable Elimination
-## Élimination d'itérateur
+```c
+void expression_simplification (int i) {
+  a[0] = i + 0;
+  a[1] = i * 0;
+  a[2] = i - i;
+  a[3] = 1 + i + 1;
+}
+```
+devient
+```c
+void expression_simplification (int i) {
+  a[0] = i;
+  a[1] = 0;
+  a[2] = 0;
+  a[3] = 2 + i;
+}
+```
+
+## Induction Variable Elimination (ou Élimination d'itérateur)
 
 Combinaison d’itérateurs dans une boucle.
+
+```
+int a[SIZE];
+int b[SIZE];
+
+void induction_variable_elimination (void) {
+  int i1, i2, i3;
+
+  for (i1 = 0, i2 = 0, i3 = 0; i1 < SIZE; i1++)
+    a[i2++] = b[i3++];
+
+  return;
+}
+  
+```
+devient
+```c
+int a[SIZE];
+int b[SIZE];
+
+void induction_variable_elimination (void) {
+  int i1;
+
+  for (i1 = 0; i1 < SIZE; i1++)
+    a[i1] = b[i1];
+
+  return;
+}
+```
+
+Cette technique peut réduire le nombre d'instructions dans une boucle.
+Ainsi, le temps d"exécution et la taille du code peuvent être amélioré.
+
+Certaines architectures ont des instructions d'auto-in/décrémentation qui peuvent être utilisé au lieu d'itérateur.
 <http://www.compileroptimizations.com/category/ive.htm>
 
 
