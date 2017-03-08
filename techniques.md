@@ -264,4 +264,36 @@ Fusion de certaines boucles adjacentes en une seule boucle.
 
 
 
+<<<<<<< HEAD
+##Defer-pop
+Quand on crée une fonction en assembleur, on a généralement un prologue et un épilogue. Quand une fonction fait son return, on procède donc à l'exécution de l'épilogue. On dit qu'on "pop". Une optimisation consiste à retarder le pop. D'où "defer-pop". 
+
+Pour des raisons de cache, c'est plus intéressant de tout pop en même temps.
+
+<https://gcc.gnu.org/onlinedocs/gcc-4.4.0/gcc/Optimize-Options.html>
+
+##Thread-jumps
+C'est une optimisation qui se fait au niveau de l'assembleur même
+Ex: ```
+	20: Si a > 20, jump to 50
+	...
+	50: Si a > 10, jump to 100
+	...
+```
+Ici, si le jump de la ligne 20 est pris, alors celui de la ligne 50 le sera aussi. Du coup on peut juste faire jump la ligne 20 vers la ligne 100 directement.
+Source: Wikipedia
+
+##Prédiction de branchement:
+Dans un processeur possédant un pipeline, un branchement peut devenir une petite perte de temps. Quelles instructions sommes-nous supposés mettre dans le pipeline ? Celles adjacentes au branchement ? Ou celles pointées par le branchement ? Le temps que le branch soit traité et arrive en fin de pipeline (de longueur variable N, généralement 5), alors N-1 instructions auraient pu commencer à être traitées, si seulement nous savions lesquelles.
+
+Alors, on tente de deviner. Il existe des approches graduellement sophistiquées, mais il ne faut pas oublier que le prédicteur de branchement est une partie du processeur et qu'il faut donc coder tout ça matériellement. 
+
+* Prédiction statique
+Les boucles font constamment appel à des branchements pour traiter la sortie ou non de la boucle. Cela se traduit par un retour en arrière conditionnel dans le code. 
+Comme il est plus fréquent de boucler que de sortir d'une boucle, un prédicteur de branchement pourra considérer un branchement vers l'arrière comme inconditionnellement pris.
+
+<https://fr.wikipedia.org/wiki/Pr%C3%A9diction_de_branchement>
+
+=======
 Loop fusion does not always improve run-time speed. On some architectures, two loops may actually perform better than one loop because, for example, there is increased data locality within each loop. In these cases, a single loop may be transformed into two, which is called loop fission.
+>>>>>>> 6b5fe5a8999e299fb5ec017c62f592836b7df4df
