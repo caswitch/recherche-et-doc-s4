@@ -244,6 +244,25 @@ Ainsi, le temps d"exécution et la taille du code peuvent être amélioré.
 Certaines architectures ont des instructions d'auto-in/décrémentation qui peuvent être utilisé au lieu d'itérateur.
 <http://www.compileroptimizations.com/category/ive.htm>
 
+## Loop optimization
+
+Méthode d'amélioration de la vitesse d'exécution et de diminution des ressources associées aux boucles.
+-> rôle important dans l'amélioration des performances du cache
+-> amélioration de l'utilisation efficace des capacités de traitement paralèlle
+It plays an important role in improving cache performance and making effective use of parallel processing capabilities. Most execution time of a scientific program is spent on loops; as such, many compiler optimization techniques have been developed to make them faster.
+<https://en.wikipedia.org/wiki/Loop_optimization>
+Beaucoup de programmes scientifiques 
+La plupart des temps d'exécution d'un programme scientifique sont consacrés à des boucles; En tant que tel, de nombreuses techniques d'optimisation du compilateur ont été développées pour les rendre plus rapides.
+
+
+## Loop Fusion (ou loop jaming)
+
+Optimisation de compilation ET loop transformation
+
+Fusion de certaines boucles adjacentes en une seule boucle.
+-> réduction de la surcharge de la boucle et améliorer les performances d'exécution.
+<http://compileroptimizations.com/category/loop_fusion.htm>
 
 
 
+Loop fusion does not always improve run-time speed. On some architectures, two loops may actually perform better than one loop because, for example, there is increased data locality within each loop. In these cases, a single loop may be transformed into two, which is called loop fission.
