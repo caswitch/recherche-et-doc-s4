@@ -251,9 +251,8 @@ Méthode d'amélioration de la vitesse d'exécution et de diminution des ressour
 -> amélioration de l'utilisation efficace des capacités de traitement paralèlle
 It plays an important role in improving cache performance and making effective use of parallel processing capabilities. Most execution time of a scientific program is spent on loops; as such, many compiler optimization techniques have been developed to make them faster.
 <https://en.wikipedia.org/wiki/Loop_optimization>
-Beaucoup de programmes scientifiques 
-La plupart des temps d'exécution d'un programme scientifique sont consacrés à des boucles; En tant que tel, de nombreuses techniques d'optimisation du compilateur ont été développées pour les rendre plus rapides.
 
+Les boucles sont beaucoup utilisées par des programmes sicientifiques. 
 
 ## Loop Fusion (ou loop jaming)
 
