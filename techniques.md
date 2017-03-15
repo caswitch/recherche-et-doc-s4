@@ -244,17 +244,19 @@ Ainsi, le temps d"exécution et la taille du code peuvent être amélioré.
 Certaines architectures ont des instructions d'auto-in/décrémentation qui peuvent être utilisé au lieu d'itérateur.
 <http://www.compileroptimizations.com/category/ive.htm>
 
-## Loop optimization
+## Loop Optimization
 
 Méthode d'amélioration de la vitesse d'exécution et de diminution des ressources associées aux boucles.
 -> rôle important dans l'amélioration des performances du cache
 -> amélioration de l'utilisation efficace des capacités de traitement paralèlle
-It plays an important role in improving cache performance and making effective use of parallel processing capabilities. Most execution time of a scientific program is spent on loops; as such, many compiler optimization techniques have been developed to make them faster.
+
 <https://en.wikipedia.org/wiki/Loop_optimization>
 
 Les boucles sont beaucoup utilisées par des programmes sicientifiques. 
 
-## Loop Fusion (ou loop jaming)
+## Loop Optimization : les transformations spécifiques de boucles
+
+### Loop Fusion (ou Loop Jaming)
 
 Optimisation de compilation ET loop transformation
 
@@ -262,38 +264,69 @@ Fusion de certaines boucles adjacentes en une seule boucle.
 -> réduction de la surcharge de la boucle et améliorer les performances d'exécution.
 <http://compileroptimizations.com/category/loop_fusion.htm>
 
+Loop Fusion n'améliore pas le temps d'exécution de certaines architectures.
 
-
-<<<<<<< HEAD
-##Defer-pop
-Quand on crée une fonction en assembleur, on a généralement un prologue et un épilogue. Quand une fonction fait son return, on procède donc à l'exécution de l'épilogue. On dit qu'on "pop". Une optimisation consiste à retarder le pop. D'où "defer-pop". 
-
-Pour des raisons de cache, c'est plus intéressant de tout pop en même temps.
-
-<https://gcc.gnu.org/onlinedocs/gcc-4.4.0/gcc/Optimize-Options.html>
-
-##Thread-jumps
-C'est une optimisation qui se fait au niveau de l'assembleur même
-Ex: ```
-	20: Si a > 20, jump to 50
-	...
-	50: Si a > 10, jump to 100
-	...
+PAS BON
+```c
+void loop_fusion (void) {
+  int i, a[100], b[100];
+  for (i = 0; i < 100; i++)
+	a[i] = 1;                     
+  for (i = 0; i < 100; i++)
+    b[i] = 2;
+}
 ```
-Ici, si le jump de la ligne 20 est pris, alors celui de la ligne 50 le sera aussi. Du coup on peut juste faire jump la ligne 20 vers la ligne 100 directement.
-Source: Wikipedia
+devient
 
-##Prédiction de branchement:
-Dans un processeur possédant un pipeline, un branchement peut devenir une petite perte de temps. Quelles instructions sommes-nous supposés mettre dans le pipeline ? Celles adjacentes au branchement ? Ou celles pointées par le branchement ? Le temps que le branch soit traité et arrive en fin de pipeline (de longueur variable N, généralement 5), alors N-1 instructions auraient pu commencer à être traitées, si seulement nous savions lesquelles.
+```c
+void loop_fusion (void) {
+  int i, a[100], b[100];
+  for (i = 0; i < 100; i++) {
+    a[i] = 1; 
+    b[i] = 2;
+  }
+}
+```
 
-Alors, on tente de deviner. Il existe des approches graduellement sophistiquées, mais il ne faut pas oublier que le prédicteur de branchement est une partie du processeur et qu'il faut donc coder tout ça matériellement. 
+### Loop Fission (ou Loop Distribution)
 
-* Prédiction statique
-Les boucles font constamment appel à des branchements pour traiter la sortie ou non de la boucle. Cela se traduit par un retour en arrière conditionnel dans le code. 
-Comme il est plus fréquent de boucler que de sortir d'une boucle, un prédicteur de branchement pourra considérer un branchement vers l'arrière comme inconditionnellement pris.
+Décomposition du corps d'une boucle en plusieurs plus petites boucles.
 
-<https://fr.wikipedia.org/wiki/Pr%C3%A9diction_de_branchement>
+Optimisation plus efficace dans les processeurs multi-cœurs qui peuvent diviser une tâche en plusieurs tâches pour chaque processeur.
+Techniques contraire à la fusion de boucles.
 
-=======
-Loop fusion does not always improve run-time speed. On some architectures, two loops may actually perform better than one loop because, for example, there is increased data locality within each loop. In these cases, a single loop may be transformed into two, which is called loop fission.
->>>>>>> 6b5fe5a8999e299fb5ec017c62f592836b7df4df
+```c
+void loop_fission (void) {
+	int i, a[100], b[100];
+	for (i = 0; i < 100; i++) {
+		a[i] = 1; 
+		b[i] = 2;
+	}
+}
+```
+devient
+
+```c
+void loop_fission (void) {
+ int i, a[100], b[100];
+ for (i = 0; i < 100; i++) {
+   a[i] = 1;                     
+ }
+ for (i = 0; i < 100; i++) {
+   b[i] = 2;
+ }
+```
+
+
+Optimisation de haut niveau (dans le middle-end)
+
+Voir les caches
+
+Qualité du code avant tout
+
+Simulation
+Jeux vidéo (optimisation énorme, cf. PS4)
+Réalité virtuelle
+Imagerie médicale en temps réel (qualité du code prime sur l'optimisation)
+
+GIMPLE, GENERIC, RTL
