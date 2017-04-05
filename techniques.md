@@ -317,6 +317,8 @@ void loop_fission (void) {
  }
 ```
 
+La lisibilité prime sur l'optimisation manuelle de code.
+Il faut laisser le compilateur optimiser pour nous.
 
 Optimisation de haut niveau (dans le middle-end)
 
